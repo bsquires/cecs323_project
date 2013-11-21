@@ -69,7 +69,8 @@ CREATE TABLE airedShows
     CONSTRAINT  airedShows_PK   PRIMARY KEY (showTime, showDate),
     CONSTRAINT  airedShows_shows_FK
         FOREIGN KEY (name) REFERENCES shows(Name)
-        ON UPDATE CASCADE
+        ON UPDATE CASCADE --If a show changes its name, the change
+                          --will ripple through
 );
 
 CREATE TABLE artists
@@ -122,7 +123,11 @@ CREATE TABLE artistPerformances
     aid             INTEGER         NOT NULL,
     sid             INTEGER         NOT NULL,
     
-    CONSTRAINT  artistPer_PK    PRIMARY KEY (aid, sid),
+    CONSTRAINT  artistPerf_PK    PRIMARY KEY (aid, sid),
+    CONSTRAINT  artistPerf_song_FK
+        FOREIGN KEY (sid) REFERENCES songs(sid),
+    CONSTRAINT  artistPerf_artist_FK
+        FOREIGN KEY (aid) REFERENCES artist(aid)
 );
 
 CREATE TABLE songsPlayed
@@ -130,5 +135,13 @@ CREATE TABLE songsPlayed
     sid             INTEGER         NOT NULL,
     showTime        TIME            NOT NULL,
     showDate        DATE            NOT NULL,
-    playTime        TIME                    , -- The time length of each song 
+    playTime        TIME                    , -- The time length of each song
+    
+    CONSTRAINT  songsPlayed_PK      PRIMARY KEY (sid, showTime, showDate, playTime)
+    CONSTRAINT  songsPlayed_song_FK
+        FOREIGN KEY (sid) REFERENCES songs (sid),
+    CONSTRAINT  songsPlayed_airedShows_FK
+        FOREIGN KEY (showTime) REFERENCES airedShows (showTime),
+    CONSTRAINT  songsPlayed_airedShows_FK2
+        FOREIGN KEY (showDate) REFERENCES airedShows (showDate)
 );
