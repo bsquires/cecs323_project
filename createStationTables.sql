@@ -26,7 +26,7 @@ CREATE TABLE zipCodes
 (
     zipCode 	CHAR(5)     NOT NULL,
     city    	VARCHAR(30) NOT NULL,
-    state		VARCHAR(20) NOT NULL,
+    state	VARCHAR(20) NOT NULL,
     
     CONSTRAINT  zipCode_PK PRIMARY KEY (zipCode)
 );
@@ -42,7 +42,7 @@ CREATE TABLE employees
     DOB			DATE,
     Salary		FLOAT,
     Street		VARCHAR(50) 	NOT NULL,
-    ZipCode		CHAR(5) 	    NOT NULL,
+    ZipCode		CHAR(5) 	NOT NULL,
     
     CONSTRAINT employees_PK PRIMARY KEY (eid),
     CONSTRAINT employess_zipCode_FK 
@@ -59,7 +59,7 @@ CREATE TABLE employees
 --requests their information removed from the DB entirely
 CREATE TABLE DJs
 (
-    eid 		    INTEGER,
+    eid 		INTEGER,
     stageName		VARCHAR(20) NOT NULL,
 
     CONSTRAINT DJs_PK PRIMARY KEY (stageName),
@@ -70,10 +70,10 @@ CREATE TABLE DJs
 
 CREATE TABLE shows
 (
-    name 		    VARCHAR(75) NOT NULL,
+    name 		VARCHAR(75) NOT NULL,
     description		VARCHAR(150),
-    type		    ENUM('Talk Show', 'Top 40', 'Morning', 'Top 5 countdown', 'Weekend Special'),
-    tagline		    VARCHAR(50),
+    type		NUM('Talk Show', 'Top 40', 'Morning', 'Top 5 countdown', 'Weekend Special'),
+    tagline		VARCHAR(50),
     
     CONSTRAINT shows_PK PRIMARY KEY(name)
 );
@@ -85,7 +85,7 @@ CREATE TABLE shows
 CREATE TABLE AiredShows
 (
     showName 		VARCHAR(30) 	NOT NULL,
-    showDate		DATE    		NOT NULL,
+    showDate		DATE    	NOT NULL,
     showTime		TIME 	    	NOT NULL,
     
     CONSTRAINT AiredShows_PK PRIMARY KEY (showDate, showTime),
@@ -95,10 +95,10 @@ CREATE TABLE AiredShows
 
 CREATE TABLE songs
 (
-    sid			    INTEGER 	NOT NULL AUTO_INCREMENT,
-    title		    VARCHAR(50) 	NOT NULL,
+    sid			INTEGER 	NOT NULL AUTO_INCREMENT,
+    title		VARCHAR(50) 	NOT NULL,
     yearProduced	DATE 		NOT NULL,
-    genre		    ENUM('Pop', 'Rock', 'Rap/hiphop', 'R&B', 'Country','Alternative',
+    genre		ENUM('Pop', 'Rock', 'Rap/hiphop', 'R&B', 'Country','Alternative',
                         'Heavy Metal', 'Trance/Techno'),
     CONSTRAINT songs_PK PRIMARY KEY (sid),
     CONSTRAINT songs_CK UNIQUE (title, yearProduced)
@@ -157,7 +157,7 @@ CREATE TABLE GuestAppearances
 --and as a result will not be updated
 CREATE TABLE songsPlayed
 (
-    sid 		    INTEGER NOT NULL,
+    sid 		INTEGER NOT NULL,
     showTime		TIME 	NOT NULL,
     showDate		DATE 	NOT NULL,
     playTime		TIME,
@@ -179,7 +179,7 @@ CREATE TABLE songsPlayed
 CREATE TABLE spans
 (
     stageName   	VARCHAR(20) 	NOT NULL,
-    beginDate		DATE    		NOT NULL,
+    beginDate		DATE    	NOT NULL,
     endDate 		DATE 	    	NOT NULL,
     showName		VARCHAR(30) 	NOT NULL,
     
