@@ -26,7 +26,7 @@ CREATE TABLE zipCodes
 (
     zipCode 	CHAR(5)     NOT NULL,
     city    	VARCHAR(30) NOT NULL,
-    state	VARCHAR(20) NOT NULL,
+    state	    VARCHAR(20) NOT NULL,
     
     CONSTRAINT  zipCode_PK PRIMARY KEY (zipCode)
 );
@@ -36,13 +36,13 @@ CREATE TABLE zipCodes
 --if a change is made in the zip codes table
 CREATE TABLE employees
 (
-    eid 		INTEGER     	NOT NULL AUTO_INCREMENT,
-    Fname		VARCHAR(30) 	NOT NULL,
-    Lname		VARCHAR(30) 	NOT NULL,
-    DOB			DATE,
+    eid 		  INTEGER     	NOT NULL AUTO_INCREMENT,
+    Fname		  VARCHAR(30) 	NOT NULL,
+    Lname		  VARCHAR(30) 	NOT NULL,
+    DOB			  DATE,
     Salary		FLOAT,
     Street		VARCHAR(50) 	NOT NULL,
-    ZipCode		CHAR(5) 	NOT NULL,
+    ZipCode		CHAR(5)      	NOT NULL,
     
     CONSTRAINT employees_PK PRIMARY KEY (eid),
     CONSTRAINT employess_zipCode_FK 
@@ -59,7 +59,7 @@ CREATE TABLE employees
 --requests their information removed from the DB entirely
 CREATE TABLE DJs
 (
-    eid 		INTEGER,
+    eid 		    INTEGER,
     stageName		VARCHAR(20) NOT NULL,
 
     CONSTRAINT DJs_PK PRIMARY KEY (stageName),
