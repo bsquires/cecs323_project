@@ -26,7 +26,7 @@ CREATE TABLE zipCodes
 (
     zipCode 		CHAR(5)     NOT NULL,
     city    		VARCHAR(30) NOT NULL,
-    state		    VARCHAR(20) NOT NULL,
+    state		VARCHAR(20) NOT NULL,
     
     CONSTRAINT  zipCode_PK PRIMARY KEY (zipCode)
 );
@@ -36,13 +36,13 @@ CREATE TABLE zipCodes
 --if a change is made in the zip codes table
 CREATE TABLE employees
 (
-    eid 		INTEGER NOT NULL AUTO_INCREMENT,
-    Fname		VARCHAR(30) NOT NULL,
-    Lname		VARCHAR(30) NOT NULL,
+    eid 		INTEGER 	NOT NULL AUTO_INCREMENT,
+    Fname		VARCHAR(30) 	NOT NULL,
+    Lname		VARCHAR(30) 	NOT NULL,
     DOB			DATE,
     Salary		FLOAT,
-    Street		VARCHAR(50) NOT NULL,
-    ZipCode		CHAR(5) NOT NULL,
+    Street		VARCHAR(50) 	NOT NULL,
+    ZipCode		CHAR(5) 	NOT NULL,
     
     CONSTRAINT employees_PK PRIMARY KEY (eid),
     CONSTRAINT employess_zipCode_FK 
@@ -59,7 +59,7 @@ CREATE TABLE employees
 --requests their information removed from the DB entirely
 CREATE TABLE DJs
 (
-    eid 			INTEGER,
+    eid 		INTEGER,
     stageName		VARCHAR(20) NOT NULL,
 
     CONSTRAINT DJs_PK PRIMARY KEY (stageName),
@@ -71,9 +71,10 @@ CREATE TABLE DJs
 CREATE TABLE shows
 (
     name 		VARCHAR(75) NOT NULL,
-    description	VARCHAR(150),
-    type			ENUM('Talk Show', 'Top 40', 'Morning', 'Top 5 countdown', 'Weekend Special'),
+    description		VARCHAR(150),
+    type		ENUM('Talk Show', 'Top 40', 'Morning', 'Top 5 countdown', 'Weekend Special'),
     tagline		VARCHAR(50),
+    
     CONSTRAINT shows_PK PRIMARY KEY(name)
 );
 
@@ -83,9 +84,9 @@ CREATE TABLE shows
 --it replaced
 CREATE TABLE AiredShows
 (
-    showName 		VARCHAR(30) NOT NULL,
-    showDate		DATE NOT NULL,
-    showTime		TIME NOT NULL,
+    showName 		VARCHAR(30) 	NOT NULL,
+    showDate		DATE		NOT NULL,
+    showTime		TIME 		NOT NULL,
     
     CONSTRAINT AiredShows_PK PRIMARY KEY (showDate, showTime),
     CONSTRAINT Airedshows_shows_FK 
@@ -94,9 +95,9 @@ CREATE TABLE AiredShows
 
 CREATE TABLE songs
 (
-    sid			INTEGER NOT NULL AUTO_INCREMENT,
-    title		VARCHAR(50) NOT NULL,
-    yearProduced	DATE NOT NULL,
+    sid			INTEGER 	NOT NULL AUTO_INCREMENT,
+    title		VARCHAR(50) 	NOT NULL,
+    yearProduced	DATE 		NOT NULL,
     genre		ENUM('Pop', 'Rock', 'Rap/hiphop', 'R&B', 'Country','Alternative',
 					'Heavy Metal', 'Trance/Techno'),
     CONSTRAINT songs_PK PRIMARY KEY (sid),
@@ -106,9 +107,9 @@ CREATE TABLE songs
 
 CREATE TABLE Artists
 (
-    aid 			INTEGER NOT NULL AUTO_INCREMENT,
-    Fname		VARCHAR(30) NOT NULL,
-    Lname		VARCHAR(30) NOT NULL,
+    aid 		INTEGER 	NOT NULL AUTO_INCREMENT,
+    Fname		VARCHAR(30) 	NOT NULL,
+    Lname		VARCHAR(30) 	NOT NULL,
     
     CONSTRAINT Artists_PK PRIMARY KEY (aid),
     CONSTRAINT Artists_CK UNIQUE (Fname, Lname)
@@ -138,8 +139,8 @@ CREATE TABLE ArtistPerformances
 --deleted from the DB the station will also remove the records of their appearences
 CREATE TABLE GuestAppearances
 (
-    showTime		TIME NOT NULL,
-    showDate		DATE NOT NULL,
+    showTime		TIME 	NOT NULL,
+    showDate		DATE 	NOT NULL,
     aid	    		INTEGER NOT NULL,
     
     CONSTRAINT GuestAppearances_PK PRIMARY KEY (showTime, showDate, aid),
@@ -156,9 +157,9 @@ CREATE TABLE GuestAppearances
 --and as a result will not be updated
 CREATE TABLE songsPlayed
 (
-    sid 			INTEGER NOT NULL,
-    showTime		TIME NOT NULL,
-    showDate		DATE NOT NULL,
+    sid 		INTEGER NOT NULL,
+    showTime		TIME 	NOT NULL,
+    showDate		DATE 	NOT NULL,
     playTime		TIME,
     
     CONSTRAINT songsPlayed_PK PRIMARY KEY (sid, showDate, showTime, playTime),
@@ -177,10 +178,10 @@ CREATE TABLE songsPlayed
 --is defined.
 CREATE TABLE spans
 (
-    stageName   	VARCHAR(20) NOT NULL,
-    beginDate		DATE	NOT NULL,
-    endDate 		DATE NOT NULL,
-    showName		VARCHAR(30) NOT NULL,
+    stageName   	VARCHAR(20) 	NOT NULL,
+    beginDate		DATE		NOT NULL,
+    endDate 		DATE 		NOT NULL,
+    showName		VARCHAR(30) 	NOT NULL,
     
     CONSTRAINT spans_PK PRIMARY KEY (beginDate, showName),
     CONSTRAINT spans_DJs_FK 
