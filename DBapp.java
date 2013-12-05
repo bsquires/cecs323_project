@@ -91,8 +91,8 @@ protected static Scanner input = new Scanner(System.in);
             String startDate = null;
             String finishDate = null;
             String showName = null;
+            String insertStr = null;
             int showID = -1;
-            String g
             
             //Get insertion information from user
             System.out.println("What show are you adding a span to?"); //User only knows show by name, not ID
@@ -107,17 +107,27 @@ protected static Scanner input = new Scanner(System.in);
             System.out.println("When will this span end?");
             finishDate = input.next();
             
-            //This is the SQL statement that will be executed
-            String insertStr = "INSERT INTO " + dbName+ ".spans(stageName,beginDate,endDate,shID)"+
-                                "VALUES('"+hostingDJ+"','"+startDate+"','"+finishDate+"','"+showID;
+            //Get shID from showName
+            String getShowName = "SELECT shID FROM "+dbName+".shows WHERE name="+showName+";";
+            
             try {
-            stmt = conn.createStatement();
-            int rowsChanged = stmt.executeUpdate(queryStr); //should be 1 if successful
-            
-            if(rowsChanged == 1) System.out.println("Span succesfully added!")
-            else if(rowsChanged == 0) System.out.println("Something has gone wrong, no changes made!")
-            else System.out.println("Something weird has happened, more than one row has changed!");
-            
+	            stmt = conn.createStatement();
+	            ResultSet rs = stmt.executeQuery(getShowName);
+	            
+	            if(rs.next())
+	            	showID = rs.getString("shID");
+	            
+	        	//This is the SQL statement that will be executed
+	            insertStr = "INSERT INTO " + dbName+ ".spans(stageName,beginDate,endDate,shID)"+
+	                          "VALUES('"+hostingDJ+"','"+startDate+"','"+finishDate+"','"+showID+");";
+	            
+	            //This is where the insert statement is executed
+	            int rowsChanged = stmt.executeUpdate(queryStr); //should be 1 if successful
+	            
+	            if(rowsChanged == 1) System.out.println("Show span succesfully added!")
+	            else if(rowsChanged == 0) System.out.println("Something has gone wrong, no changes made!")
+	            else System.out.println("Something weird has happened, more than one row has changed!");
+	            
             }catch (SQLException e){
                 System.out.println("Exception :(");
             }finally {
