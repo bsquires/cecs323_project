@@ -91,6 +91,8 @@ protected static Scanner input = new Scanner(System.in);
             String startDate = null;
             String finishDate = null;
             String showName = null;
+            int showID = -1;
+            String g
             
             //Get insertion information from user
             System.out.println("What show are you adding a span to?"); //User only knows show by name, not ID
@@ -105,24 +107,22 @@ protected static Scanner input = new Scanner(System.in);
             System.out.println("When will this span end?");
             finishDate = input.next();
             
-            
-            String insertStr = "INSERT INTO " + dbName+ ".spans(stageName,beginDate,endDate,shID) VALUES ";
+            //This is the SQL statement that will be executed
+            String insertStr = "INSERT INTO " + dbName+ ".spans(stageName,beginDate,endDate,shID)"+
+                                "VALUES('"+hostingDJ+"','"+startDate+"','"+finishDate+"','"+showID;
             try {
             stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(queryStr);
-            //retrieve the results from the result set
-            while(rs.next())
-            {
-                String artistName = rs.getString("Fname");
-                artistName  += " " + rs.getString("Lname");
-                System.out.println("Artist Name: " + artistName);
-            }
-            } catch (SQLException e)
-            {
-            System.out.println("Exception :(");
+            int rowsChanged = stmt.executeUpdate(queryStr); //should be 1 if successful
+            
+            if(rowsChanged == 1) System.out.println("Span succesfully added!")
+            else if(rowsChanged == 0) System.out.println("Something has gone wrong, no changes made!")
+            else System.out.println("Something weird has happened, more than one row has changed!");
+            
+            }catch (SQLException e){
+                System.out.println("Exception :(");
             }finally {
-            if (stmt != null) { stmt.close(); }
-             }//end catch
+                if (stmt != null) { stmt.close(); }
+            }//end catch
             
             
         }//end insertSpan
