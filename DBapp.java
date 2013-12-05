@@ -83,6 +83,50 @@ protected static Scanner input = new Scanner(System.in);
             
         }//end prepQuery1
         
+                //pass the active connection to the insert
+        public void insertSpan(Connection conn) throws SQLException
+        {
+            Statement stmt = null;
+            String hostingDJ = null;
+            String startDate = null;
+            String finishDate = null;
+            String showName = null;
+            
+            //Get insertion information from user
+            System.out.println("What show are you adding a span to?"); //User only knows show by name, not ID
+            showName = input.next();
+            
+            System.out.println("Which DJ will be hosting this span?");
+            hostingDJ = input.next();
+            
+            System.out.println("When will this span start? (e.g. 2013-02-14");
+            startDate = input.next();
+            
+            System.out.println("When will this span end?");
+            finishDate = input.next();
+            
+            
+            String insertStr = "INSERT INTO " + dbName+ ".spans(stageName,beginDate,endDate,shID) VALUES ";
+            try {
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(queryStr);
+            //retrieve the results from the result set
+            while(rs.next())
+            {
+                String artistName = rs.getString("Fname");
+                artistName  += " " + rs.getString("Lname");
+                System.out.println("Artist Name: " + artistName);
+            }
+            } catch (SQLException e)
+            {
+            System.out.println("Exception :(");
+            }finally {
+            if (stmt != null) { stmt.close(); }
+             }//end catch
+            
+            
+        }//end insertSpan
+        
 	public static void main(String[] args) throws SQLException, ClassNotFoundException {
 	DBapp myApp = new DBapp();
 	Connection myConnect = myApp.getConnection();
