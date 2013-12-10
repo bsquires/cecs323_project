@@ -59,29 +59,48 @@ protected static Scanner input = new Scanner(System.in);
 	}//end getConnection() method
         
         //pass the active connection to the query
-        public void prepQuery1(Connection conn) throws SQLException
+        public void queryMenu(Connection conn) throws SQLException
         {
-            Statement stmt = null;
-            queryStr = "SELECT * FROM " + dbName+ ".artists";
-            try {
-            stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(queryStr);
-            //retrieve the results from the result set
-            while(rs.next())
+        	//Create the menu
+            System.out.println("Please select a query to execute.");
+            boolean inputVal = false;
+            String userInput= null;
+            char choice =  ' ';
+            
+            while(!inputVal)
             {
-                String artistName = rs.getString("Fname");
-                artistName  += " " + rs.getString("Lname");
-                System.out.println("Artist Name: " + artistName);
+                System.out.println("1: List all employees");
+                System.out.println("2: List all shows");
+                System.out.println("3: List all DJs");
+                
+                userInput = input.next();
+                choice = userInput.charAt(0);
+                switch(choice)
+                {
+                    /*
+                    This is where we will call the query methods
+                    */
+                    case '1':
+                        employeeDataQuery(conn);
+                        inputVal=true;
+                        break;
+                    case '2':
+                        showNameQuery(conn);
+                        inputVal=true;
+                        break;
+                    case '3':
+                        djNameQuery(conn);
+                        inputVal=true;
+                        break;
+                    default:
+                        System.out.println("Invalid input. Please try again");
+                        break;
+                        
+                }
+            
             }
-            } catch (SQLException e)
-            {
-            System.out.println(e.getMessage());
-            }finally {
-            if (stmt != null) { stmt.close(); }
-             }//end catch
             
-            
-        }//end prepQuery1
+        }//end queryMenu
         
         public void employeeDataQuery(Connection conn) throws SQLException
         {
@@ -360,6 +379,7 @@ protected static Scanner input = new Scanner(System.in);
             try {
                 stmt = conn.createStatement();
                 int rowsAffected = stmt.executeUpdate(queryStr);
+                if(rowsAffected == 1 ) System.out.println("SUCCESS!");
             } catch (SQLException e)
             {
                 System.out.println("I can't insert that, Dave.");
@@ -377,7 +397,7 @@ protected static Scanner input = new Scanner(System.in);
 	Connection myConnect = myApp.getConnection();
         
         //Create the menu
-        System.out.println("Pleaes make a selection.");
+        System.out.println("Please make a selection.");
         boolean inputVal = false;
         String userInput= null;
         char choice =  ' ';
@@ -389,6 +409,7 @@ protected static Scanner input = new Scanner(System.in);
             System.out.println("3: to enter a new span");
             System.out.println("4: to delete an employee");
             System.out.println("5: to roll back changes made");
+            System.out.println("q: Quit program");
             
             userInput = input.next();
             choice = userInput.charAt(0);
@@ -398,7 +419,7 @@ protected static Scanner input = new Scanner(System.in);
                 This is where we will call the update and query methods
                 */
                 case '1':
-                    myApp.prepQuery1(myConnect);
+                    myApp.queryMenu(myConnect);
                     inputVal=true;
                     break;
                 case '2':
@@ -418,6 +439,10 @@ protected static Scanner input = new Scanner(System.in);
                     break;
                 case '5':
                     myConnect.rollback();
+                    break;
+                case 'q':
+                	inputVal=true;
+                	break;
                 default:
                     System.out.println("Invalid input. Please try again");
                     break;
