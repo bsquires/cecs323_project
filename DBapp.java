@@ -75,7 +75,7 @@ protected static Scanner input = new Scanner(System.in);
             }
             } catch (SQLException e)
             {
-            System.out.println("Exception :(");
+            System.out.println(e.getMessage());
             }finally {
             if (stmt != null) { stmt.close(); }
              }//end catch
@@ -83,7 +83,105 @@ protected static Scanner input = new Scanner(System.in);
             
         }//end prepQuery1
         
-                //pass the active connection to the insert
+        public void employeeDataQuery(Connection conn) throws SQLException
+        {
+            Statement stmt = null;
+            queryStr = "SELECT Fname, Lname FROM " + dbName+ ".employees";
+            try {
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(queryStr);
+            //retrieve the results from the result set
+            while(rs.next())
+            {
+                String employeeName = rs.getString("Fname");
+                employeeName  += " " + rs.getString("Lname");
+                System.out.println("Employee Name: " + employeeName);
+            }
+            } catch (SQLException e)
+            {
+            System.out.println(e.getMessage());
+            }finally {
+            if (stmt != null) { stmt.close(); }
+             }//end catch
+            
+            
+        }
+        
+        public void showNameQuery(Connection conn) throws SQLException
+        {
+            Statement stmt = null;
+            String showName = null;
+            queryStr = "SELECT name FROM " + dbName+ ".shows";
+            try {
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(queryStr);
+            //retrieve the results from the result set
+            while(rs.next())
+            {
+                showName = rs.getString("name");
+                System.out.println("Show Name: " + showName);
+            }
+            } catch (SQLException e)
+            {
+            System.out.println(e.getMessage());
+            }finally {
+            if (stmt != null) { stmt.close(); }
+             }//end catch
+            
+            
+        }//showNameQuery
+        
+        public void djNameQuery(Connection conn) throws SQLException
+        {
+            Statement stmt = null;
+            String stageName = null;
+            queryStr = "SELECT stageName FROM " + dbName+ ".djs";
+            try {
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(queryStr);
+            //retrieve the results from the result set
+            while(rs.next())
+            {
+                stageName = rs.getString("stageName");
+                System.out.println("DJ Name: " + stageName);
+            }
+            } catch (SQLException e)
+            {
+            System.out.println(e.getMessage());
+            }finally {
+            if (stmt != null) { stmt.close(); }
+             }//end catch
+            
+            
+        }//end djNameQuery
+        
+        public int getShowIDQuery(Connection conn, String showName) throws SQLException
+        {
+            Statement stmt = null;
+            int showID = -1;
+            queryStr = "SELECT shid  FROM " + dbName+ ".shows WHERE "
+                    +"name = '"+showName+"'";
+            try {
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(queryStr);
+            //retrieve the results from the result set
+            while(rs.next())
+            {
+                showID = rs.getInt("shid");
+            }
+            } catch (SQLException e)
+            {
+            System.out.println(e.getMessage());
+            }finally {
+            if (stmt != null) { stmt.close(); }
+             }//end catch
+            
+            return showID;
+        }//end djNameQuery
+        
+        
+        
+        //pass the active connection to the insert
         public void insertSpan(Connection conn) throws SQLException
         {
             Statement stmt = null;
@@ -93,43 +191,48 @@ protected static Scanner input = new Scanner(System.in);
             String showName = null;
             String insertStr = null;
             int showID = -1;
+            int rowsChanged = -1;
+            
+            //clear the buffer
+            input.nextLine();
             
             //Get insertion information from user
-            System.out.println("What show are you adding a span to?"); //User only knows show by name, not ID
-            showName = input.next();
+            System.out.println("What show are you adding a span to?");
+            System.out.println("Please carefully enter one of the following:\n");
+            showNameQuery(conn);
+            showName = input.nextLine();
             
             System.out.println("Which DJ will be hosting this span?");
-            hostingDJ = input.next();
+            System.out.println("Please carefully enter one of the following:\n");
+            djNameQuery(conn);
+            hostingDJ = input.nextLine();
             
             System.out.println("When will this span start? (e.g. 2013-02-14");
-            startDate = input.next();
+            startDate = input.nextLine();
             
             System.out.println("When will this span end?");
-            finishDate = input.next();
+            finishDate = input.nextLine();
             
             //Get shID from showName
-            String getShowName = "SELECT shID FROM "+dbName+".shows WHERE name="+showName+";";
+            showID = getShowIDQuery(conn, showName);
             
+            //Execute the Insert
             try {
+                    //This is the SQL statement that will be executed
+	            insertStr = "INSERT INTO " + dbName+ ".spans(stageName,beginDate,endDate, showName, shID)"+
+	                          " VALUES('"+hostingDJ+"','"+startDate+"','"+finishDate+"','"+showName+"',"+showID+");";
+                    
 	            stmt = conn.createStatement();
-	            ResultSet rs = stmt.executeQuery(getShowName);
+	            rowsChanged = stmt.executeUpdate(insertStr);
 	            
-	            if(rs.next())
-	            	showID = rs.getString("shID");
-	            
-	        	//This is the SQL statement that will be executed
-	            insertStr = "INSERT INTO " + dbName+ ".spans(stageName,beginDate,endDate,shID)"+
-	                          "VALUES('"+hostingDJ+"','"+startDate+"','"+finishDate+"','"+showID+");";
-	            
-	            //This is where the insert statement is executed
-	            int rowsChanged = stmt.executeUpdate(queryStr); //should be 1 if successful
-	            
-	            if(rowsChanged == 1) System.out.println("Show span succesfully added!")
-	            else if(rowsChanged == 0) System.out.println("Something has gone wrong, no changes made!")
+	            if(rowsChanged == 1) System.out.println("Show span succesfully added!");
+	            else if(rowsChanged == 0) System.out.println("Something has gone wrong, no changes made!");
 	            else System.out.println("Something weird has happened, more than one row has changed!");
 	            
-            }catch (SQLException e){
-                System.out.println("Exception :(");
+            }catch (SQLException e)
+            {
+                System.out.println("I can't insert that, Dave.");
+                System.out.println(e.getMessage());
             }finally {
                 if (stmt != null) { stmt.close(); }
             }//end catch
@@ -137,6 +240,138 @@ protected static Scanner input = new Scanner(System.in);
             
         }//end insertSpan
         
+        public void confirmCommit(Connection conn) throws SQLException
+        {
+            //Check if the user wants to commit the changes
+            boolean commits = false;
+            
+            try
+            {
+                while(!commits)
+                {
+                    System.out.println("Do you want to commit the changes made thus far?");
+                    System.out.println("Press y for yes");
+                    System.out.println("Press n for no");
+                    System.out.println("Press r to rollback changes made so far");
+                    String commString = input.next();
+        
+                    if(commString.equalsIgnoreCase("y"))
+                    {
+                        conn.commit();
+                        commits=true;
+                    }else if(commString.equalsIgnoreCase("n"))
+                    {
+                        commits = true;
+                    }
+                    else if(commString.equalsIgnoreCase("r"))
+                    {
+                        conn.rollback();
+                        commits = true;
+                    }
+                    else
+                    {
+                        System.out.println("Invalid input. Please try again");
+                    }//end commits conditionals
+                }//end commit while
+            }catch (SQLException e)
+            {
+                System.out.println("I can't insert that, Dave.");
+                System.out.println(e.getMessage());
+            }
+        }//end commitConfirm
+        public void deleteEmployee(Connection conn) throws SQLException
+        {
+            String confirmDelete = null;
+            String empFname = null;
+            String empLname = null;
+            Statement stmt = null;
+            input.nextLine();//clear the buffer
+            System.out.println("If you delete an employee that is a DJ");
+            System.out.println("that DJ name will remain, but will no longer");
+            System.out.println("be associated with the employee that used that DJ name");
+            System.out.println("Would you like to continue?");
+            
+            boolean valid = false;
+            while(!valid)
+            {
+                confirmDelete = input.nextLine();
+                if(confirmDelete.equals("y"))valid = true;
+                else if(confirmDelete.equals("n")) return;
+                else System.out.println("I'm sorry, Dave. But I can't do that."
+                        + "\nChoose more carefully.");
+            }
+          
+           System.out.println("Please carefully enter the first name of the employee you would like to remove\n");
+           employeeDataQuery(conn);
+           empFname = input.nextLine();
+           System.out.println("Please carefully enter the last name of the employee you would like to remove\n");
+           empLname = input.nextLine();
+           
+           queryStr = "DELETE FROM "+dbName+".employees WHERE Fname = '"
+                   + empFname +"' AND Lname = '"+empLname+"'";
+           
+           try {
+                stmt = conn.createStatement();
+                int rowsAffected = stmt.executeUpdate(queryStr);
+                if(rowsAffected == 1 ){System.out.println("SUCCESS!");}
+            } catch (SQLException e)
+            {
+                System.out.println("I can't delete that, Dave.");
+                System.out.println(e.getMessage());
+            }finally {
+                if (stmt != null) { stmt.close(); }
+             }//end catch
+        }
+         //Insert into the employees table
+        public void insertEmployees(Connection conn) throws SQLException
+        {
+            String fname = null;
+            String lname = null;
+            int salary = -1;
+            String dob = null;
+            String address = null;
+            String zip = null;
+            Statement stmt = null;
+            
+            input.nextLine();
+            //prompt the user to enter the employee information
+            System.out.println("Please enter the employee's first name");
+            fname = input.nextLine();
+            System.out.println("Please enter the employee's last name");
+            lname = input.nextLine();
+            System.out.println("Please enter employee salary");
+            salary = input.nextInt();
+            input.nextLine();//user NextLine to interpret the carriage return
+            System.out.println("Please enter the dob in format yyyy-mm-dd");
+            dob = input.nextLine();
+            System.out.println("Please enter an address for the employee");
+            address = input.nextLine();
+            System.out.println("Please enter a zipcode");
+            zip = input.nextLine();
+            
+            queryStr = "INSERT INTO "+dbName+ ".employees VALUES "
+                    + "(NULL, '"+fname+"','"+lname+"','"+dob+"',"
+                    +salary+",'"+address+"','"+zip+"')";
+            /*
+            Use these two linesof code to see your Query string:
+            System.out.println("This is your Query String: ");
+            System.out.println(queryStr);
+            */
+            try {
+                stmt = conn.createStatement();
+                int rowsAffected = stmt.executeUpdate(queryStr);
+            } catch (SQLException e)
+            {
+                System.out.println("I can't insert that, Dave.");
+                System.out.println(e.getMessage());
+            }finally {
+                if (stmt != null) { stmt.close(); }
+             }//end catch
+            
+            
+        }//end insertEmployees
+        
+        //BEGIN MAIN PROGRAM
 	public static void main(String[] args) throws SQLException, ClassNotFoundException {
 	DBapp myApp = new DBapp();
 	Connection myConnect = myApp.getConnection();
@@ -149,10 +384,11 @@ protected static Scanner input = new Scanner(System.in);
         
         while(!inputVal)
         {
-            System.out.println("1: for query1");
-            System.out.println("2: for query2");
-            System.out.println("3: for query3");
-            System.out.println("4: for query4");
+            System.out.println("1: Execute a Query");
+            System.out.println("2: to enter a new employee");
+            System.out.println("3: to enter a new span");
+            System.out.println("4: to delete an employee");
+            System.out.println("5: to roll back changes made");
             
             userInput = input.next();
             choice = userInput.charAt(0);
@@ -166,17 +402,22 @@ protected static Scanner input = new Scanner(System.in);
                     inputVal=true;
                     break;
                 case '2':
-                    myApp.prepQuery1(myConnect);
+                    myApp.insertEmployees(myConnect);
+                    myApp.confirmCommit(myConnect);
                     inputVal=true;
                     break;
                 case '3':
-                    myApp.prepQuery1(myConnect);
+                    myApp.insertSpan(myConnect);
+                    myApp.confirmCommit(myConnect);
                     inputVal=true;
                     break;
                 case '4':
-                    myApp.prepQuery1(myConnect);
+                    myApp.deleteEmployee(myConnect);
+                    myApp.confirmCommit(myConnect);
                     inputVal=true;
                     break;
+                case '5':
+                    myConnect.rollback();
                 default:
                     System.out.println("Invalid input. Please try again");
                     break;
@@ -184,9 +425,9 @@ protected static Scanner input = new Scanner(System.in);
             }
         
         }
-        //myConnect.commitChanges();
+   
+        
         myConnect.close();
-
 	}
 
 }
